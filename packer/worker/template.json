@@ -1,0 +1,37 @@
+{
+    "variables" : {
+        "region" : "us-east-1",
+        "aws_profile": "maark-SSM",
+        "source_ami" : "ami-06ca3ca175f37dd66",
+        "instance_type": "t3.medium",
+        "ssh_key": "/Users/gland/.ssh/mar-mfs-core-staging.pem",
+        "vpc_id": "vpc-71126c08",
+        "subnet_id": "subnet-0088895dce34e2fd0"
+    },
+    "builders" : [
+        {
+            "type" : "amazon-ebs",
+            "profile" : "{{user `aws_profile`}}",
+            "region" : "{{user `region`}}",
+            "instance_type" : "{{user `instance_type`}}",
+            "source_ami" : "{{user `source_ami`}}",
+            "ssh_username" : "ec2-user",
+            "vpc_id" : "{{user `vpc_id`}}",
+            "subnet_id" : "{{user `subnet_id`}}",
+            "ssh_interface": "public_ip",
+            "associate_public_ip_address": "true",
+            "ami_name" : "jenkins-worker",
+            "ami_description" : "Jenkins worker's AMI",
+            "run_tags" : {
+                "Name" : "jenkins-worker-builder"
+            }
+        }
+    ],
+    "provisioners" : [
+        {
+            "type" : "shell",
+            "script" : "./setup.sh",
+            "execute_command" : "sudo -E -S sh '{{ .Path }}'"
+        }
+    ]
+}
